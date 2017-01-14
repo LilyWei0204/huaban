@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>huabu</title>
+    <style>
+        body,ul,li{
+            padding: 0;margin: 0;
+            list-style: none;
+        }
+        *{
+            box-sizing: border-box;
+        }
+        .box{
+            width: 800px;height: 500px;
+            border: 1px solid #333;
+            position: fixed;top: 0;
+            left: 0;bottom: 0;right: 0;margin: auto;
+        }
+        .menu{
+            width: 100%;height: 50px;
+            background: #ccc;
+            line-height: 50px;
+            text-align: center;
+        }
+        .menu .menu-list{
+            float: left;padding: 0 20px;
+            cursor: pointer;
+            transition: transform 0.5s ease;
+        }
+        .menu .menu-list:hover{
+           color: red;
+        }
+        .main{
+            width: 100%;height: 450px;
+        }
+        .main .aside-menu{
+            box-sizing: border-box;
+            width: 20%;height: 100%;float: left;
+            overflow: auto;border-right: 1px solid #666;
+        }
+        .main .canvasbox{
+            width: 80%;height: 100%;float: left;
+            position: relative;box-sizing: border-box;
+        }
+        .main .canvasbox canvas{
+            background: #eee;
+        }
+        .main .canvasbox .copy{
+            position: absolute;
+            left: 0;
+            top:0;z-index: 999;
+            width: 100%;height: 100%;
+        }
+        .aside-menu{
+            text-align: center;
+            cursor: pointer;
+            line-height: 50px;
+
+        }
+        .aside-menu-list li{
+            display: block;
+            border-bottom: 1px solid #000;
+        }
+        .aside-menu-list:not(:first-child){
+            display:none;
+        }
+        .aside-menu-list li:hover{
+            color: blue;
+        }
+        input[type=number]{
+            width:90%;
+            padding:0;margin:0;
+        }
+        .xp{
+            width:10px;height:10px;border:1px solid #000;
+            position: absolute;
+            left:0;top:0;display: none;
+        }
+    </style>
+    <script src="js/jquery.js"></script>
+    <script src="js/shape1.js"></script>
+    <script>
+        window.onload=function(){
+            var canvasBox=document.querySelector(".canvasbox");
+            var canvasBoxW=canvasBox.offsetWidth;
+            var canvasBoxH=canvasBox.offsetHeight;
+            var canvas=document.querySelector("canvas");
+            var cobj=canvas.getContext("2d");
+            var copy=document.querySelector(".copy");
+//            var xp=document.querySelector(".xp");
+
+            canvas.width=canvasBoxW;
+            canvas.height=canvasBoxH;
+
+            var drawObj=new shape(canvas,copy,cobj);
+
+            $(".menu-list").click(function(){
+                var index=$(".menu-list").index(this);
+                //alert(index);
+                $(".aside-menu-list").hide().eq(index).slideToggle(100);
+                drawObj.isshowxp=false;
+                $(".xp").css("display","none");
+
+            });
+
+            $(".aside-menu-list:eq(1) li").click(function(){
+                var fn=$(this).attr("data-role");
+                if(fn!="pen"){
+                    drawObj.type=fn;
+                    drawObj.draw();
+                }else{
+                    drawObj.pen();
+                }
+
+            });
+
+
+            $(".aside-menu-list:eq(2) li").click(function(){
+                var fn=$(this).attr("data-role");
+                    drawObj.style=fn;
+                    drawObj.draw();
+            });
+
+            $(".aside-menu-list:eq(3) input").change(function(){
+                drawObj[$(this).attr("data-role")]=$(this).val();
+                drawObj.draw();
+            });
+
+            $(".aside-menu-list:eq(4) li").click(function(){
+                var num=$(this).attr("data-role");
+                if(num!=null){
+                    drawObj.lineWidth=num;
+                    drawObj.draw();
+                }
+            });
+            $(".aside-menu-list:eq(4) li input").change(function(){
+                var num=$(this).val();
+                    drawObj.lineWidth=num;
+                    drawObj.draw();
+            });
+
+
+            $(".aside-menu-list:eq(0) li").click(function(){
+                var index=$(".aside-menu-list:eq(0) li").index(this);
+                if(index==0){
+                    if(drawObj.history.length>0){
+                        var yes=confirm("是否保存");
+                        if(yes){
+                            var url=canvas.toDataURL();
+                            var newurl=url.replace("image/png", "stream/octet");
+                            location.href=newurl;
+                        }
+
+                    }
+                    drawObj.history=[];
+                    cobj.clearRect(0,0,canvas.width,canvas.height);
+                }else if(index==1){
+                    //返回
+                    if(drawObj.history.length==0){
+                        cobj.clearRect(0,0,canvas.width,canvas.height);
+                        setTimeout(function(){
+                            alert("no");
+                        },10)
+                    }
+                    if(drawObj.isback){
+                        if(drawObj.history.length==1){
+                            drawObj.histroy.pop();
+                            cobj.clearRect(0,0,canvas.width,canvas.height);
+                        }else{
+                            drawObj.histroy.pop();
+                            cobj.putImageData(drawObj.histroy[drawObj.history.length-1],0,0);
+
+                        }
+                    }else{
+                        cobj.putImageData(drawObj.histroy.pop(),0,0);
+                    }
+
+                    drawObj.isback=false;
+                }else if(index==2){
+                    var url=canvas.toDataURL();
+                    var newurl=url.replace("image/png", "stream/octet");
+                    location.href=newurl;
+                }
+            });
+
+            $(".menu-list:last-child ").click(function(){
+
+                var xpObj=$(".xp");
+                drawObj.clear(xpObj);
+                drawObj.isshowxp=true;
+            });
+
+            $(".aside-menu-list:last-child input").change(function(){
+                drawObj.xpsize=$(this).val();
+                $(".xp").css({
+                    width:$(this).val()+"px",
+                    height:$(this).val()+"px"
+                })
+            })
+        }
+    </script>
+</head>
+<body>
+  <div class="box">
+      <ul class="menu">
+         <li class="menu-list">
+             文件
+         </li>
+          <li class="menu-list">
+              画图
+          </li>
+          <li class="menu-list">
+              画图方式
+          </li>
+          <li class="menu-list">
+              颜色
+          </li>
+          <li class="menu-list">
+              线条宽度
+          </li>
+          <li class="menu-list">
+              橡皮
+          </li>
+      </ul>
+      <div class="main">
+          <aside class="aside-menu">
+              <ul class="aside-menu-list">
+                  <li>新建</li>
+                  <li>返回</li>
+                  <li>保存</li>
+              </ul>
+              <ul class="aside-menu-list">
+                  <li data-role="line">画线</li>
+                  <li data-role="arc">圆</li>
+                  <li data-role="rect">矩形</li>
+                  <li data-role="dbx">多边形</li>
+                  <li data-role="djx">多角形</li>
+                  <li data-role="pen">铅笔工具</li>
+              </ul>
+              <ul class="aside-menu-list">
+                  <li data-role="stroke">描边</li>
+                  <li data-role="fill">填充</li>
+              </ul>
+              <ul class="aside-menu-list">
+                  back:<input type="color"  data-role="fillStyle"><br>
+                  border:<input type="color"  data-role="strokeStyle"><br>
+              </ul>
+              <ul class="aside-menu-list">
+                  <li data-role="1">细</li>
+                  <li data-role="3">中</li>
+                  <li data-role="5">粗</li>
+                  <li>num:<input type="number"></li>
+              </ul>
+              <ul class="aside-menu-list">
+                  num:<input type="number" value="10">
+              </ul>
+          </aside>
+          <div class="canvasbox">
+              <canvas>
+
+              </canvas>
+              <div class="copy"></div>
+              <div class="xp"></div>
+          </div>
+      </div>
+  </div>
+</body>
+</html>
