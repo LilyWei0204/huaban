@@ -1,0 +1,161 @@
+<!--$(".menu-list").click(function(){-->
+   <!--var index=$(".menu-list").index(this);-->
+  <!--$(".aside-menu-list").hide.eq(index).slideToggle(200);-->
+  <!--toDataURl保存地址->
+<!--})-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="font/iconfont.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/shape.js"></script>
+    <script src="js/index.js"></script>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+         body,ul,li,aside{
+             padding:0;
+             margin:0;
+             list-style:none;
+         }
+        .box{
+            width: 800px;
+            height:500px;
+            background: #f3f6fa;
+            border: 1px solid black;
+            position: fixed;
+            top:0;bottom:0;
+            left:0;right: 0;
+            margin: auto;
+        }
+        .box .btn{
+            width: 100%;
+            height:40px;
+            border-bottom: 1px solid black;
+            background: #ccc;
+            line-height: 20px;
+        }
+        .box .btn li{
+            padding: 10px;
+            float: left;
+            transition: color 0.5s ease;
+            cursor: pointer;
+        }
+        .box li:hover{
+            color:red;
+        }
+        .main{
+            width: 100%;
+            height: 460px;
+        }
+        .main aside{
+            width: 20%;
+            height: 100%;
+            border-right:1px solid black;
+            box-sizing: border-box;
+            float: left;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .main .canvas-box{
+            width: 80%;
+            height: 100%;
+            float: left;
+            position: relative;
+        }
+        .aside-menu-list li{
+            margin: 2px 0;
+            cursor: pointer;
+        }
+        .aside-menu-list:not(:first-child){
+            display: none;
+        }
+        .canvas-box .copy{
+            position: absolute;
+            left:0;top:0;z-index:999;
+            width:100%;height:100%;
+            cursor: pointer;
+        }
+        .xp{
+            width: 10px;height: 10px;
+            background: #ccc;
+            border-radius: 50%;
+            position: absolute;
+            left:0;top:0;display: none;
+            cursor: pointer;
+        }
+        #file{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <ul class="btn">
+            <li class="iconfont icon-wenjian">  文件</li>
+            <li class="iconfont icon-huaban"> 画图</li>
+            <li class="iconfont icon-qiehuanbeijing">  画图方式</li>
+            <li class="iconfont icon-yanse1"> 颜色</li>
+            <li class="iconfont icon-cuxixiantiao">  线条宽度</li>
+            <li class="iconfont icon-xiangpi"> 橡皮擦</li>
+            <li class="imgchuli iconfont icon-chuli">  图片处理</li>
+
+        </ul>
+        <div class="main">
+            <aside class="aside-menu">
+                <ul class="aside-menu-list">
+                    <li class="iconfont icon-xinjian">  新建</li>
+                    <li class="iconfont icon-fanhui">  返回</li>
+                    <li class="iconfont icon-baocun">  保存</li>
+                </ul>
+                <ul class="aside-menu-list">
+                    <li class="iconfont icon-icon2" data-role="line"> 画线</li>
+                    <li class="iconfont icon-juxing" data-role="rect">  矩形</li>
+                    <li class="iconfont icon-webtubiaozhengli17" data-role="arc">  圆形</li>
+                    <li class="iconfont icon-polygon" data-role="bian">  多边形</li>
+                    <li class="iconfont icon-wujiaoxing" data-role="xing">  多角形</li>
+                    <li class="iconfont icon-icon" data-role="pen">  铅笔工具</li>
+                </ul>
+                <ul class="aside-menu-list">
+                    <li class="iconfont icon-vmiaobian" data-role="stroke">  描边</li>
+                    <li class="iconfont icon-beijingyanse" data-role="fill">  填充</li>
+                </ul>
+                <ul class="aside-menu-list">
+                    border:<input type="color" data-role="strokeStyle">
+                    <br>
+                    back:<input type="color" data-role="fillStyle">
+                </ul>
+                <ul class="aside-menu-list">
+                    <li class="iconfont icon-jianhao_1" data-role="1">  细</li>
+                    <li class="iconfont icon-hao" data-role="3">  中</li>
+                    <li class="iconfont icon-jiacu" data-role="5">  粗</li>
+                    <li class="iconfont icon-zidingyi" data-role="null">  自定义:<input type="number" style="width: 50px"></li>
+                </ul>
+                <ul class="aside-menu-list">
+                    <li class="iconfont icon-xiangpi" data-role="5">  橡皮擦</li>
+                    <li class="iconfont icon-zidingyi" data-role="null">  自定义:<input type="number" style="width: 50px"></li>
+                </ul>
+                <ul class="aside-menu-list">
+                    <li class="iconfont icon-gaosimohulvjing" data-role="blur">  模糊</li>
+                    <li class="iconfont icon-masaike" data-role="m">  马赛克</li>
+                    <li class="iconfont icon-tupianchulifuwu" data-role="fx">  反向</li>
+                </ul>
+            </aside>
+            <div class="canvas-box">
+                <canvas></canvas>
+                <div class="copy">
+                </div>
+                <div class="xp"></div>
+                <input type="file" id="file">
+                <img src="" alt="" class="box-img" hidden>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
